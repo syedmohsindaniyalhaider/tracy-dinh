@@ -2,21 +2,53 @@ import prisma from "../config/database.js";
 import express from "express";
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.send("Quiz routes");
+router.get("/", async (req, res) => {
+  try {
+    let exceptionPattern;
+    const allQuizzesWithQuestions = await prisma.quizzes.findMany({
+      include: {
+        questions: true,
+      },
+    });
+    exceptionPattern = {
+      success: true,
+      errors: null,
+      data: allQuizzesWithQuestions,
+    };
+    return res.status(200).json(exceptionPattern);
+  } catch (err) {
+    exceptionPattern = {
+      success: false,
+      errors: err,
+      data: null,
+    };
+    res.status(403).send(exceptionPattern);
+  }
 });
 
 router.post("/create", async (req, res) => {
-  console.log(req.body);
   try {
+    let exceptionPattern;
+    const { quizTitle, quizDescription } = req.body;
     const createQuiz = await prisma.quizzes.create({
       data: {
-        ...req.body,
+        quizTitle: quizTitle,
+        quizDescription: quizDescription,
       },
     });
-    return res.status(200).json(createQuiz);
-  } catch {
-    res.status(403).send("Something went wrong");
+    exceptionPattern = {
+      success: true,
+      errors: null,
+      data: createQuiz,
+    };
+    return res.status(200).json(pattern);
+  } catch (err) {
+    exceptionPattern = {
+      success: false,
+      errors: err,
+      data: null,
+    };
+    res.status(403).send(pattern);
   }
 });
 

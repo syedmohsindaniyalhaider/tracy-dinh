@@ -1,5 +1,5 @@
 import quizzes from "./routes/quizzes.js";
-import questions from "./routes/questions";
+import questions from "./routes/questions.js";
 import express from "express";
 const app = express();
 const port = 3000;
@@ -16,4 +16,4 @@ app.listen(port, () => {
 });
 
 app.use("/api/quizzes", quizzes);
-api.use("/api/questions", questions);
+app.use("/api/questions", questions);

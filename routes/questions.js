@@ -8,26 +8,57 @@ router.get("/", (req, res) => {
 
 router.post("/add", async (req, res) => {
   try {
+    let exceptionPattern;
+    const { quizId, question, correctAnswer, options, mandatory } = req.body;
     const addQuestion = await prisma.questions.create({
       data: {
-        ...req.body,
+        quizId: quizId,
+        question: question,
+        correctAnswer: correctAnswer,
+        options: options,
+        mandatory: mandatory,
       },
     });
-    return res.status(200).json(addQuestion);
+    exceptionPattern = {
+      success: true,
+      errors: null,
+      data: addQuestion,
+    };
+    return res.status(200).json(exceptionPattern);
   } catch (err) {
-    res.status(403).send("Something went wrong");
+    exceptionPattern = {
+      success: false,
+      errors: err,
+      data: null,
+    };
+    res.status(403).send(exceptionPattern);
   }
 });
 
-router.post("/delete", async (req, res) => {
+router.delete("/delete", async (req, res) => {
   try {
-    const addQuestion = await prisma.questions.create({
-      data: {
-        ...req.body,
+    let exceptionPattern;
+    const { questionId } = req.body;
+    console.log(questionId);
+    const deleteQuestion = await prisma.questions.delete({
+      where: {
+        questionId: questionId,
       },
     });
-    return res.status(200).json(addQuestion);
+    exceptionPattern = {
+      success: true,
+      errors: null,
+      data: deleteQuestion,
+    };
+    return res.status(200).json(exceptionPattern);
   } catch (err) {
-    res.status(403).send("Something went wrong");
+    exceptionPattern = {
+      success: false,
+      errors: err,
+      data: null,
+    };
+    res.status(403).send(exceptionPattern);
   }
 });
+
+export default router;
